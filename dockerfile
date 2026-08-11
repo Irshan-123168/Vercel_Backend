@@ -9,5 +9,6 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
-EXPOSE 9040
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Railway injects PORT dynamically; fall back to 9040 for local runs
+EXPOSE ${PORT:-9040}
+ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT:-9040} -jar app.jar"]
